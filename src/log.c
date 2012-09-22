@@ -90,7 +90,7 @@ void log_printf(char *data, ...)
       return;
 
    timecounter = timecounter + 1;
-   if (timecounter > 15) {
+   if (timecounter > 256) {
      time(&present);
      timecounter = 0;
    }
