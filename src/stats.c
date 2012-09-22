@@ -195,21 +195,21 @@ void stats_output(char *target)
    time(&present);
    uptime = present - STATS_UPTIME;
 
-   irc_send("PRIVMSG %s :Uptime: %s", target, dissect_time(uptime));
+   irc_send(0, "PRIVMSG %s :Uptime: %s", target, dissect_time(uptime));
 
    LIST_FOREACH(p, OpmItem->blacklists->head)
    {
       bl = p->data;
       if(bl->stats_recv > 0)
       {
-         irc_send("PRIVMSG %s :DNSBL: %u successful lookups from %s",
+         irc_send(0, "PRIVMSG %s :DNSBL: %u successful lookups from %s",
             target, bl->stats_recv, bl->name);
       }
    }
 
    if(STATS_DNSBLSENT > 0)
    {
-      irc_send("PRIVMSG %s :DNSBL: %u reports sent", target,
+      irc_send(0, "PRIVMSG %s :DNSBL: %u reports sent", target,
             STATS_DNSBLSENT);
    }
 
@@ -217,12 +217,12 @@ void stats_output(char *target)
    {
       if(STATS_PROXIES[i].count > 0)
       {
-         irc_send("PRIVMSG %s :Found %u (%s) open.", target,
+         irc_send(0, "PRIVMSG %s :Found %u (%s) open.", target,
                STATS_PROXIES[i].count, STATS_PROXIES[i].name);
       }
    }
 
-   irc_send("PRIVMSG %s :Number of connects: %u (%.2f/minute)",
+   irc_send(0, "PRIVMSG %s :Number of connects: %u (%.2f/minute)",
             target, STATS_CONNECTIONS, STATS_CONNECTIONS ?
             (float)STATS_CONNECTIONS / ((float)uptime / 60.0) : 0.0);
 
@@ -250,7 +250,7 @@ void fdstats_output(char *target)
    if(getrlimit(RLIMIT_NOFILE, &rlim) == -1)
    {
       log_printf("FDSTAT -> getrlimit() error retrieving RLIMIT_NOFILE (%s)", strerror(errno));
-      irc_send("PRIVMSG %s :FDSTAT -> getrlimit() error retrieving RLIMIT_NOFILE (%s)",
+      irc_send(0, "PRIVMSG %s :FDSTAT -> getrlimit() error retrieving RLIMIT_NOFILE (%s)",
                 target,  strerror(errno));
       return;
    }
@@ -297,5 +297,5 @@ void fdstats_output(char *target)
       }
    }
 
-   irc_send("PRIVMSG %s :Total open FD: %u/%d", target, total_fd_use, rlim.rlim_cur);
+   irc_send(0, "PRIVMSG %s :Total open FD: %u/%d", target, total_fd_use, rlim.rlim_cur);
 }

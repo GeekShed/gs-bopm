@@ -380,7 +380,7 @@ void irc_send_channels(char *data, ...)
 
    snprintf(tosend, MSGLENMAX, "PRIVMSG %s :%s", IRC_CHANNELS, data2);
 
-   irc_send("%s", tosend);
+   irc_send(0,"%s", tosend);
 }
 
 
@@ -433,12 +433,12 @@ static void irc_connect(void)
       return;
    }
 
-   irc_send("NICK %s", IRCItem->nick);
+   irc_send(0,"NICK %s", IRCItem->nick);
 
    if(strlen(IRCItem->password) > 0)
-      irc_send("PASS %s", IRCItem->password);
+      irc_send(0,"PASS %s", IRCItem->password);
 
-   irc_send("USER %s %s %s :%s",
+   irc_send(0, "USER %s %s %s :%s",
             IRCItem->username, IRCItem->username, IRCItem->username,
             IRCItem->realname);
 
@@ -660,7 +660,7 @@ void irc_timer(void)
        * ircds (*cough* unreal *cough*) don't cause uneeded
        * reconnections
        */
-      irc_send("PING :BOPM");
+      irc_send(0, "PING :BOPM");
    }
 
 }
@@ -810,20 +810,20 @@ static void m_perform(char **parv, unsigned int parc, char *msg, struct UserInfo
 
    /* Identify to nickserv if needed */
    if(strlen(IRCItem->nickserv))
-      irc_send("%s", IRCItem->nickserv);
+      irc_send(0, "%s", IRCItem->nickserv);
 
    /* Oper */
-   irc_send("OPER %s", IRCItem->oper);
+   irc_send(0, "OPER %s", IRCItem->oper);
 
    /* Set modes */
-   irc_send("MODE %s %s", IRCItem->nick, IRCItem->mode);
+   irc_send(0, "MODE %s %s", IRCItem->nick, IRCItem->mode);
 
    /* Set Away */
-   irc_send("AWAY :%s", IRCItem->away);
+   irc_send(0, "AWAY :%s", IRCItem->away);
 
    /* Perform */
    LIST_FOREACH(node, IRCItem->performs->head)
-      irc_send("%s", (char *) node->data);
+      irc_send(0, "%s", (char *) node->data);
 
    /* Join all listed channels. */
    LIST_FOREACH(node, IRCItem->channels->head)
@@ -834,9 +834,9 @@ static void m_perform(char **parv, unsigned int parc, char *msg, struct UserInfo
          continue;
 
       if(strlen(channel->key) > 0)
-         irc_send("JOIN %s %s", channel->name, channel->key);
+         irc_send(0, "JOIN %s %s", channel->name, channel->key);
       else
-         irc_send("JOIN %s", channel->name);
+         irc_send(0, "JOIN %s", channel->name);
    }
 }
 
@@ -861,7 +861,7 @@ static void m_ping(char **parv, unsigned int parc, char *msg, struct UserInfo *s
    if(OPT_DEBUG >= 2)
       log_printf("IRC -> PING? PONG!");
 
-   irc_send("PONG %s", parv[2]);
+   irc_send(0, "PONG %s", parv[2]);
 }
 
 
@@ -893,7 +893,7 @@ static void m_invite(char **parv, unsigned int parc, char *msg, struct UserInfo 
    if((channel = get_channel(parv[3])) == NULL)
       return;
 
-   irc_send("JOIN %s %s", channel->name, channel->key);
+   irc_send(0, "JOIN %s %s", channel->name, channel->key);
 }
 
 
@@ -970,7 +970,7 @@ static void m_ctcp(char **parv, unsigned int parc, char *msg, struct UserInfo *s
 
    if(strncasecmp(parv[3], "\001VERSION\001", 9) == 0)
    {
-      irc_send("NOTICE %s :\001VERSION Blitzed Open Proxy Monitor %s\001",
+      irc_send(0, "NOTICE %s :\001VERSION Blitzed Open Proxy Monitor %s\001",
             source_p->irc_nick, VERSION);
    }
 }
@@ -1125,7 +1125,7 @@ static void m_cannot_join(char **parv, unsigned int parc, char *msg,
    if(strlen(channel->invite) == 0)
       return;
 
-   irc_send("%s", channel->invite);
+   irc_send(0, "%s", channel->invite);
 }
 
 

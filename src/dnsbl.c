@@ -151,7 +151,7 @@ static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl,
 
    if(ss->manual_target)
    {
-      irc_send("PRIVMSG %s :CHECK -> DNSBL -> %s appears in BL zone %s (%s)",
+      irc_send(0, "PRIVMSG %s :CHECK -> DNSBL -> %s appears in BL zone %s (%s)",
             ss->manual_target->name, ss->ip, bl->name, text_type);
    }
    else if(!ss->positive)
@@ -191,7 +191,7 @@ void dnsbl_result(struct firedns_result *res)
    if(res->text[0] == '\0' && fdns_errno == FDNS_ERR_NXDOMAIN)
    {
       if(ds->ss->manual_target != NULL)
-         irc_send("PRIVMSG %s :CHECK -> DNSBL -> %s does not appear in BL zone %s", 
+         irc_send(0, "PRIVMSG %s :CHECK -> DNSBL -> %s does not appear in BL zone %s", 
                    ds->ss->manual_target->name, ds->ss->ip,
                     (strlen(ds->ss->ip) < strlen(res->lookup))
 						   ? (res->lookup + strlen(ds->ss->ip) + 1)

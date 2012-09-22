@@ -210,7 +210,7 @@ void command_parse(char *command, char *msg, struct ChannelConf *target,
       }
    }
 
-   irc_send("USERHOST %s", source_p->irc_nick);
+   irc_send(0, "USERHOST %s", source_p->irc_nick);
 }
 
 
@@ -407,7 +407,7 @@ static void cmd_fdstat(char *param, char *source, struct ChannelConf *target)
 #if 0
 static void cmd_op(char *param, char *source, struct ChannelConf *target)
 {
-   irc_send("MODE %s +o %s", target->name, param);
+   irc_send(0, "MODE %s +o %s", target->name, param);
 
    USE_VAR(source);
 }
