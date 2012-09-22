@@ -352,7 +352,9 @@ void irc_send(int type, char *data, ...)
    if (send(IRC_FD, tosend, strlen(tosend), 0) == -1)
    {
       /* Return of -1 indicates error sending data; we reconnect. */
+/*
       log_printf("IRC -> Error sending data to server\n");
+*/
       irc_reconnect();
    }
 }
