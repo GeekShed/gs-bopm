@@ -132,7 +132,7 @@ o Unreal Ircd
   For *older* versions of Unreal to work,  patches to fix the HCN connect 
   notices (found at http://www.blitzed.org/files/) must be applied.
 
-  Unreal 3.1.3 seems to require opers to be global if they are to see
+  Unreal 1.0 seems to require opers to be global if they are to see
   connection notices.
     -- prince@avalon.zirc.org
 
