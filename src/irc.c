@@ -71,7 +71,9 @@
 #include "negcache.h"
 #include "malloc.h"
 #include "main.h"
-
+#ifdef ASYNC
+#include <aio.h>
+#endif
 RCSID("$Id: irc.c,v 1.27 2003/11/29 19:56:19 strtok Exp $");
 
 static void irc_init(void);
@@ -332,7 +334,7 @@ static void irc_init(void)
  */
 
 
-void irc_send(char *data, ...)
+void irc_send(int type, char *data, ...)
 {
    va_list arglist;
    char    data2[MSGLENMAX];

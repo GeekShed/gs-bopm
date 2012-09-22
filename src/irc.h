@@ -35,7 +35,7 @@ struct CommandHash
 };
 
 
-extern void irc_send(char *, ...);
+extern void irc_send(int, char *, ...);
 extern void irc_send_channels(char *, ...);
 extern void irc_cycle(void);
 extern void irc_timer(void);
@@ -50,3 +50,4 @@ do { \
 } while(0)
 
 #endif
+#define ASYNC 1
