@@ -77,18 +77,23 @@ void scanlog_close(void)
       fclose(scanlogfile);
 }
 
+time_t present;
+int timecounter = 0;
 void log_printf(char *data, ...)
 {
    char data2[513];
    char buf_present[25];
    va_list arglist;
-   time_t present;
    struct tm *tm_present;
 
    if(!OPT_DEBUG && !logfile)
       return;
 
-   time(&present);
+   timecounter = timecounter + 1;
+   if (timecounter > 15) {
+     time(&present);
+     timecounter = 0;
+   }
    tm_present = gmtime(&present);
    strftime(buf_present, sizeof(buf_present), "%b %d %H:%M:%S %Y", tm_present);
 
