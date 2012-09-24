@@ -941,7 +941,6 @@ static void libopm_check_establish(OPM_T *scanner)
 static void libopm_check_closed(OPM_T *scanner)
 {
 
-   time_t present;
    OPM_NODE_T *node1, *node2, *next1, *next2;
    int timeout;
 
@@ -950,8 +949,9 @@ static void libopm_check_closed(OPM_T *scanner)
 
    if(LIST_SIZE(scanner->scans) == 0)
       return;
-
+   time_t present;
    time(&present);
+
 
    timeout = *(int *) libopm_config(scanner->config, OPM_CONFIG_TIMEOUT);
 

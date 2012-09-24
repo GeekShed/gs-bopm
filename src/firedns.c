@@ -45,6 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "list.h"
 #include "log.h"
 #include "dnsbl.h"
+#include "timec.h"
 
 RCSID("$Id: firedns.c,v 1.22 2005/06/03 12:58:12 dg Exp $");
 
@@ -731,7 +732,6 @@ void firedns_cycle(void)
    static struct pollfd *ufds = NULL;
    int fd;
    unsigned int size, i;
-   time_t timenow;
 
    if(LIST_SIZE(CONNECTIONS) == 0)
       return;
@@ -739,7 +739,6 @@ void firedns_cycle(void)
    if(ufds == NULL)
       ufds = MyMalloc((sizeof *ufds) * OptionsItem->dns_fdlimit);
 
-   time(&timenow);
    size = 0;
 
    LIST_FOREACH_SAFE(node, next, CONNECTIONS->head)
@@ -752,7 +751,7 @@ void firedns_cycle(void)
       if(p->fd < 0)
          continue;
 
-      if(p->fd > 0 && (p->start + FDNS_TIMEOUT) < timenow)
+      if(p->fd > 0 && (p->start + FDNS_TIMEOUT) < t_present)
       {
          /* Timed out - remove from list */
          list_remove(CONNECTIONS, node);

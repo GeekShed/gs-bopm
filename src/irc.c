@@ -71,6 +71,7 @@
 #include "negcache.h"
 #include "malloc.h"
 #include "main.h"
+#include "timec.h"
 #ifdef ASYNC
 #include <aio.h>
 #endif
@@ -460,12 +461,9 @@ static void irc_connect(void)
 static void irc_reconnect(void)
 {
 
-   time_t present;
-   
-   time(&present);
   
    /* Only try to reconnect every RECONNECT_INTERVAL seconds */ 
-   if((present - IRC_LASTRECONNECT) < RECONNECTINTERVAL)
+   if((t_present - IRC_LASTRECONNECT) < RECONNECTINTERVAL)
    {
       /* Sleep to avoid excessive CPU */
       sleep(1);

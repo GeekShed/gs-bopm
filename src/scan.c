@@ -1163,15 +1163,13 @@ int scan_checkexempt(char *mask, char *ipmask)
 static void scan_log(OPM_REMOTE_T *remote)
 {
    char buf_present[25];
-   time_t present;
    struct tm *tm_present;
    struct scan_struct *ss = (struct scan_struct *) remote->data;
 
    if(!(OptionsItem->scanlog && scanlogfile))
       return;
 
-   time(&present);
-   tm_present = gmtime(&present);
+   tm_present = gmtime(&t_present);
    strftime(buf_present, sizeof(buf_present), "%b %d %H:%M:%S %Y", tm_present);
 
    fprintf(scanlogfile, "[%s] %s:%d (%s) \"%s\"\n", buf_present,

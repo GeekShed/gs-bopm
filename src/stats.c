@@ -68,7 +68,7 @@ along with this program; if not, write to the Free Software
 #include "scan.h"
 #include "stats.h"
 #include "libopm/src/opm_types.h"
-
+#include "timec.h"
 static time_t STATS_UPTIME;
 static unsigned int STATS_CONNECTIONS;
 static unsigned int STATS_DNSBLSENT;
@@ -187,13 +187,11 @@ void stats_dnsblsend(void)
 void stats_output(char *target)
 {
    unsigned int i;
-   time_t present;
    time_t uptime;
    node_t *p;
    struct BlacklistConf *bl;
 
-   time(&present);
-   uptime = present - STATS_UPTIME;
+   uptime = t_present - STATS_UPTIME;
 
    irc_send(0, "PRIVMSG %s :Uptime: %s", target, dissect_time(uptime));
 

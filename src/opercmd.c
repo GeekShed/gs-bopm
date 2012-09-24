@@ -42,7 +42,7 @@ along with this program; if not, write to the Free Software
 #include "malloc.h"
 #include "list.h"
 #include "stats.h"
-
+#include "timec.h"
 /* List of active commands */
 
 list_t *COMMANDS = NULL;
@@ -106,7 +106,6 @@ void command_timer()
 
    node_t *node, *next;
    struct Command *cs;
-   time_t present;
 
    /* Only perform command removal every COMMANDINTERVAL seconds */
    if(interval++ < COMMANDINTERVAL)
@@ -114,12 +113,11 @@ void command_timer()
    else
       interval = 0;
 
-   time(&present);
 
    LIST_FOREACH_SAFE(node, next, COMMANDS->head)
    {
       cs = (struct Command *) node->data;
-      if((present - cs->added) > COMMANDTIMEOUT)
+      if((t_present - cs->added) > COMMANDTIMEOUT)
       {
          command_free(cs);
          list_remove(COMMANDS, node);
