@@ -495,28 +495,30 @@ static void irc_reconnect(void)
  */
 
 static void irc_read2(void) {
-	char data[256];
+	char data[4096];
 	int len;
-	while ((len = read(IRC_FD, &data, 512)) > 0) {
+	while ((len = read(IRC_FD, &data, 4096)) > 0) {
 		char c;
 		int offset = 0;
 		while (offset < len) {
 			c = data[offset];
 			if (c == '\r') {
+				offset = offset + 1;
 				continue;
 			} else if (c == '\n') {
 				IRC_RAW[IRC_RAW_LEN] = '\0';
+				irc_parse();
+				IRC_RAW_LEN = 0;
 				
 			} else if (c == '\0') {
 			} else {
 			   	IRC_RAW[IRC_RAW_LEN++] = c;
-				irc_parse();
-				IRC_RAW_LEN = 0;
 			}
 			offset = offset + 1;
 		}
 	}
-	if((errno != EAGAIN))
+
+	if((len <= 0 && errno != EAGAIN))
 	{
 		if(OPT_DEBUG >= 2)
 		log_printf("irc_read -> errno=%d len=%d", errno, len);
