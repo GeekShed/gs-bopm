@@ -66,7 +66,7 @@
 #include "malloc.h"
 #include "match.h"
 #include "scan.h"
-
+#include "timec.h"
 /* Libopm */
 
 #include "libopm/src/opm.h"
@@ -153,6 +153,7 @@ void scan_timer(void)
          nc_counter = 0;
       }
    }
+   time(&t_present);
 }
 
 

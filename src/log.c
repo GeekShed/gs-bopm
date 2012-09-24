@@ -39,7 +39,7 @@ along with this program; if not, write to
 #include "config.h"
 #include "extern.h"
 #include "log.h"
-
+#include "timec.h"
 
 FILE *logfile;
 FILE *scanlogfile;
@@ -77,8 +77,6 @@ void scanlog_close(void)
       fclose(scanlogfile);
 }
 
-time_t present;
-int timecounter = 0;
 void log_printf(char *data, ...)
 {
    char data2[513];
@@ -89,12 +87,7 @@ void log_printf(char *data, ...)
    if(!OPT_DEBUG && !logfile)
       return;
 
-   timecounter = timecounter + 1;
-   if (timecounter > 256) {
-     time(&present);
-     timecounter = 0;
-   }
-   tm_present = gmtime(&present);
+   tm_present = gmtime(&t_present);
    strftime(buf_present, sizeof(buf_present), "%b %d %H:%M:%S %Y", tm_present);
 
    va_start(arglist, data);

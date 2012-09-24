@@ -352,9 +352,9 @@ void irc_send(int type, char *data, ...)
    if (send(IRC_FD, tosend, strlen(tosend), 0) == -1)
    {
       /* Return of -1 indicates error sending data; we reconnect. */
-/*
+
       log_printf("IRC -> Error sending data to server\n");
-*/
+
       irc_reconnect();
    }
 }
@@ -573,7 +573,6 @@ static void irc_parse(void)
    /* Store a copy of IRC_RAW for the handlers (for functions that need PROOF) */
    strcpy(msg, IRC_RAW);
    
-   log_printf(msg);
    /* parv[0] is always the source */
    if(IRC_RAW[0] == ':')
       parv[0] = IRC_RAW + 1;

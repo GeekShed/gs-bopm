@@ -10,6 +10,5 @@ extern void log_printf(char *data, ...) __attribute__((format(printf,1,2)));
 #else
 extern void log_printf(char *data, ...);
 #endif
-
 #endif
 

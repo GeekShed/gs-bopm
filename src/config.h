@@ -129,4 +129,5 @@ extern struct ExemptConf *ExemptItem;
 extern list_t *UserItemList;
 extern list_t *ScannerItemList;
 
+
 #endif /* CONFIG_H */
