@@ -81,6 +81,7 @@ static void irc_init(void);
 static void irc_connect(void);
 static void irc_reconnect(void);
 static void irc_read(void);
+static void irc_read2(void);
 static void irc_parse(void);
 
 static struct ChannelConf *get_channel(const char *);
@@ -184,7 +185,7 @@ void irc_cycle(void)
       default:
          /* Check if IRC data is available. */
          if (FD_ISSET(IRC_FD, &IRC_READ_FDSET))
-            irc_read();
+            irc_read2();
          break;
    }
 }
@@ -492,6 +493,38 @@ static void irc_reconnect(void)
  * Return: NONE
  *
  */
+
+static void irc_read2(void) {
+	char data[256];
+	int len;
+	while ((len = read(IRC_FD, &data, 512)) > 0) {
+		char c;
+		int offset = 0;
+		while (offset < len) {
+			c = data[offset];
+			if (c == '\r') {
+				continue;
+			} else if (c == '\n') {
+				IRC_RAW[IRC_RAW_LEN] = '\0';
+				
+			} else if (c == '\0') {
+			} else {
+			   	IRC_RAW[IRC_RAW_LEN++] = c;
+				irc_parse();
+				IRC_RAW_LEN = 0;
+			}
+			offset = offset + 1;
+		}
+	}
+	if((errno != EAGAIN))
+	{
+		if(OPT_DEBUG >= 2)
+		log_printf("irc_read -> errno=%d len=%d", errno, len);
+		irc_reconnect();
+		IRC_RAW_LEN = 0;
+		return;
+	}
+}
 
 static void irc_read(void)
 {
