@@ -100,8 +100,10 @@ void log_printf(char *data, ...)
    }
    else
    {
+/*
       fprintf(logfile, "[%s] %s\n", buf_present, data2);
       fflush(logfile);
+*/
    }
 }
 

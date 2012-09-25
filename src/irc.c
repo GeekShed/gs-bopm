@@ -170,13 +170,10 @@ void irc_cycle(void)
 
    IRC_TIMEOUT.tv_sec  = 0;
    /* Block .025 seconds to avoid excessive CPU use on select(). */
-   IRC_TIMEOUT.tv_usec = 25000;
+   IRC_TIMEOUT.tv_usec = 250000;
 
    FD_ZERO(&IRC_READ_FDSET);
    FD_SET(IRC_FD, &IRC_READ_FDSET);
-	int options;
-	options=fcntl(IRC_FD,F_GETFL,0);
-	fcntl(IRC_FD,F_SETFL,options | O_NONBLOCK);
 
 
    switch (select((IRC_FD + 1), &IRC_READ_FDSET, 0, 0, &IRC_TIMEOUT))
@@ -501,12 +498,12 @@ static void irc_reconnect(void)
 
 static void irc_read2(void) {
 	char * data;
-	if ((data = calloc(1,4096)) == NULL) {
+	if ((data = calloc(1,64)) == NULL) {
 
 	}
 	else {
 		int len;
-		while ((len = read(IRC_FD, data, 4096)) > 0) {
+		if ((len = read(IRC_FD, data, 64)) > 0) {
 			char c;
 			int offset = 0;
 			while (offset < len) {
@@ -520,15 +517,13 @@ static void irc_read2(void) {
 					IRC_RAW_LEN = 0;
 				} else if (c == '\0') {
 					offset = offset + 1;
-					break;
 				} else {
 				   	IRC_RAW[IRC_RAW_LEN++] = c;
 				}
 				offset = offset + 1;
 			}
 		}
-		free(data);
-	
+		free(data);	
 		if((len <= 0 && errno != EAGAIN))
 		{
 			if(OPT_DEBUG >= 2)
