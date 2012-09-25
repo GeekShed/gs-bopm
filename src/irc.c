@@ -56,7 +56,7 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <regex.h>
-
+#include <fcntl.h>
 #include "config.h"
 #include "irc.h"
 #include "log.h"
@@ -174,6 +174,10 @@ void irc_cycle(void)
 
    FD_ZERO(&IRC_READ_FDSET);
    FD_SET(IRC_FD, &IRC_READ_FDSET);
+	int options;
+	options=fcntl(IRC_FD,F_GETFL,0);
+	fcntl(IRC_FD,F_SETFL,options | O_NONBLOCK);
+
 
    switch (select((IRC_FD + 1), &IRC_READ_FDSET, 0, 0, &IRC_TIMEOUT))
    {
@@ -241,6 +245,7 @@ static void irc_init(void)
 
    /* Request file desc for IRC client socket */
    IRC_FD = socket(AF_INET, SOCK_STREAM, 0);
+
 
    if (IRC_FD == -1)
    {
@@ -495,36 +500,43 @@ static void irc_reconnect(void)
  */
 
 static void irc_read2(void) {
-	char data[4096];
-	int len;
-	while ((len = read(IRC_FD, &data, 4096)) > 0) {
-		char c;
-		int offset = 0;
-		while (offset < len) {
-			c = data[offset];
-			if (c == '\r') {
-				offset = offset + 1;
-				continue;
-			} else if (c == '\n') {
-				IRC_RAW[IRC_RAW_LEN] = '\0';
-				irc_parse();
-				IRC_RAW_LEN = 0;
-				
-			} else if (c == '\0') {
-			} else {
-			   	IRC_RAW[IRC_RAW_LEN++] = c;
-			}
-			offset = offset + 1;
-		}
-	}
+	char * data;
+	if ((data = calloc(1,4096)) == NULL) {
 
-	if((len <= 0 && errno != EAGAIN))
-	{
-		if(OPT_DEBUG >= 2)
-		log_printf("irc_read -> errno=%d len=%d", errno, len);
-		irc_reconnect();
-		IRC_RAW_LEN = 0;
-		return;
+	}
+	else {
+		int len;
+		while ((len = read(IRC_FD, data, 4096)) > 0) {
+			char c;
+			int offset = 0;
+			while (offset < len) {
+				c = data[offset];
+				if (c == '\r') {
+					offset = offset + 1;
+					continue;
+				} else if (c == '\n') {
+					IRC_RAW[IRC_RAW_LEN] = '\0';
+					irc_parse();
+					IRC_RAW_LEN = 0;
+				} else if (c == '\0') {
+					offset = offset + 1;
+					break;
+				} else {
+				   	IRC_RAW[IRC_RAW_LEN++] = c;
+				}
+				offset = offset + 1;
+			}
+		}
+		free(data);
+	
+		if((len <= 0 && errno != EAGAIN))
+		{
+			if(OPT_DEBUG >= 2)
+			log_printf("irc_read -> errno=%d len=%d", errno, len);
+			irc_reconnect();
+			IRC_RAW_LEN = 0;
+			return;
+		}
 	}
 }
 
