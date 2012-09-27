@@ -370,12 +370,16 @@ void scan_connect(char **user, char *msg)
          {
             if(OPT_DEBUG)
             {
-               log_printf("SCAN -> %s!%s@%s (%s) is negatively cached. "
+               log_printf("SCAN -> %s!%s@%s (%s) is in the cache. "
                      "Skipping all tests.", user[0], user[1], user[2],
                      user[3]);
             }
+	    // XXX Insert counter increment.
             return;
-         }
+         } else 
+	 {
+	    negcache_insert2(ip.sa4.sin_addr.s_addr);
+	}
       }
    }
 
@@ -875,13 +879,15 @@ static void scan_handle_error(OPM_T *scanner, OPM_REMOTE_T *remote,
 
 static void scan_negative(struct scan_struct *ss)
 {
-   /* Insert IP in negcache */
+	return;
+/*
    if(OptionsItem->negcache > 0)
    {
       if(OPT_DEBUG >= 2)
          log_printf("SCAN -> Adding %s to negative cache", ss->ip);
       negcache_insert(ss->ip);
    }
+*/
 }
 
 

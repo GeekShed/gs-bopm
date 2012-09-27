@@ -64,7 +64,7 @@ along with this program; if not, write to:
 #include "malloc.h"
 #include "log.h"
 #include "defs.h"
-
+#include "timec.h"
 RCSID("$Id: negcache.c,v 1.5 2003/06/22 13:19:39 andy Exp $");
 
 extern unsigned int OPT_DEBUG;
@@ -220,6 +220,15 @@ void negcache_insert(const char *ipstr)
    }
 
    n = nc_insert(nc_head, ip.sa4.sin_addr.s_addr);
+
+   if (n)
+      n->seen = time(NULL);
+}
+void negcache_insert2(void *  dst)
+{
+
+   struct cnode *n;
+   n = nc_insert(nc_head, dst);
 
    if (n)
       n->seen = time(NULL);
