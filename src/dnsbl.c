@@ -151,8 +151,8 @@ static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl,
 
    if(ss->manual_target)
    {
-      irc_send(0, "PRIVMSG %s :%c4%cCHECK -> DNSBL -> %s appears in BL zone %s (%s)",
-            ss->manual_target->name, 3, 2, ss->ip, bl->name, text_type);
+      irc_send(0, "PRIVMSG %s :CHECK -> DNSBL -> %s appears in BL zone %s (%s)",
+            ss->manual_target->name, ss->ip, bl->name, text_type);
    }
    else if(!ss->positive)
    {
