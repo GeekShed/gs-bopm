@@ -370,8 +370,7 @@ void scan_connect(char **user, char *msg)
          {
             if(OPT_DEBUG)
             {
-               log_printf("SCAN -> %s!%s@%s (%s) is in the cache. "
-                     "Skipping all tests.", user[0], user[1], user[2],
+               log_printf("SCAN -> %s!%s@%s (%s) is in the cache. [xe]", user[0], user[1], user[2],
                      user[3]);
             }
 	    // XXX Insert counter increment.
@@ -416,7 +415,7 @@ void scan_connect(char **user, char *msg)
          {
             if(OPT_DEBUG)
             {
-               log_printf("SCAN -> Passing %s to scanner [%s]", mask,
+               log_printf("SCAN -> Passing %s to scanner [xe] [%s]", mask,
                      scs->name);
             }
 
