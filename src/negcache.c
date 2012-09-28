@@ -197,8 +197,9 @@ struct cnode *check_neg_cache(const unsigned long ip)
       /* Check it is recent enough. */
       now = time(NULL);
 
-      if (now - n->seen <= OptionsItem->negcache)
+      if (now - n->seen <= OptionsItem->negcache) {
          return(n);
+      }
    }
 
    return(NULL);
@@ -221,17 +222,10 @@ void negcache_insert(const char *ipstr)
 
    n = nc_insert(nc_head, ip.sa4.sin_addr.s_addr);
 
-   if (n)
+   if (n) {
       n->seen = time(NULL);
-}
-void negcache_insert2(void *  dst)
-{
-
-   struct cnode *n;
-   n = nc_insert(nc_head, dst);
-
-   if (n)
-      n->seen = time(NULL);
+      n->counter = 1;
+   }
 }
 
 /*
@@ -282,11 +276,14 @@ static void nc_rebuild(struct cnode *old_head, struct cnode *new_head,
       new = nc_insert(new_head, n->ip);
       new->seen = n->seen;
    }
-   else if (OPT_DEBUG >= 2)
-   {
-      log_printf("NEGCACHE -> Deleting negcache node for %lu added at %lu", n->ip,
-          n->seen);
+   else {
+       if (n->counter > 5) {
+         struct in_addr address;
+	 address.s_addr = htonl(n->ip);
+	 irc_send(0, "PRIVMSG #BOPM :(%lu) hits scan found: %s", n->counter , inet_ntoa(address));
+      }
    }
+
 
    /* Safe to free() this node now. */
    MyFree(n);

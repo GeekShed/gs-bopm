@@ -140,7 +140,7 @@ void scan_timer(void)
 
    if (OptionsItem->negcache > 0)
    {
-      if (nc_counter++ >= NEG_CACHE_REBUILD)
+      if (nc_counter++ >= 3)
       {
          /*
           * Time to rebuild the negative
@@ -356,31 +356,6 @@ void scan_connect(char **user, char *msg)
    static char mask[MSGLENMAX];
    static char ipmask[MSGLENMAX];
 
-   /* Check negcache before anything */
-   if(OptionsItem->negcache > 0)
-   {
-      if (!inet_pton(AF_INET, user[3], &(ip.sa4.sin_addr)))
-      {
-         log_printf("SCAN -> Invalid IPv4 address '%s'!", user[3]);
-         return;
-      }
-      else
-      {
-         if(check_neg_cache(ip.sa4.sin_addr.s_addr) != NULL)
-         {
-            if(OPT_DEBUG)
-            {
-               log_printf("SCAN -> %s!%s@%s (%s) is in the cache. [xe]", user[0], user[1], user[2],
-                     user[3]);
-            }
-	    // XXX Insert counter increment.
-            return;
-         } else 
-	 {
-	    negcache_insert2(ip.sa4.sin_addr.s_addr);
-	}
-      }
-   }
 
    /* Generate user mask */
    snprintf(mask, MSGLENMAX, "%s!%s@%s", user[0], user[1], user[2]);
@@ -396,6 +371,39 @@ void scan_connect(char **user, char *msg)
 
    /* create scan_struct */
    ss = scan_create(user, msg);
+
+   /* Check negcache before anything */
+   if(OptionsItem->negcache > 0)
+   {
+      if (!inet_pton(AF_INET, user[3], &(ip.sa4.sin_addr)))
+      {
+         log_printf("SCAN -> Invalid IPv4 address '%s'!", user[3]);
+         return;
+      }
+      else
+      {
+	 struct cnode * node = check_neg_cache(ip.sa4.sin_addr.s_addr);
+         if(node != NULL) {
+		log_printf("%i  [xe]", node->ip);
+	 }
+	 else {
+		log_printf("NULL pointer [xe]");
+	 }
+         if(node != NULL)
+         {
+            if(OPT_DEBUG)
+            {
+               log_printf("SCAN -> %s!%s@%s (%s) is in the cache. [xe]", user[0], user[1], user[2],
+                     user[3]);
+            }
+            node->counter = node->counter + 1;
+            return;
+         } else 
+	 {
+	    negcache_insert(ss->ip);
+	 }
+      }
+   }
 
    /* Store ss in the remote struct, so that in callbacks we have ss */
    ss->remote->data = ss;
@@ -879,14 +887,6 @@ static void scan_handle_error(OPM_T *scanner, OPM_REMOTE_T *remote,
 static void scan_negative(struct scan_struct *ss)
 {
 	return;
-/*
-   if(OptionsItem->negcache > 0)
-   {
-      if(OPT_DEBUG >= 2)
-         log_printf("SCAN -> Adding %s to negative cache", ss->ip);
-      negcache_insert(ss->ip);
-   }
-*/
 }
 
 
