@@ -495,11 +495,12 @@ static void irc_reconnect(void)
  * Return: NONE
  *
  */
-char data[64];
+char data[4096];
 
 static void irc_read2(void) {
 		int len;
-		if ((len = read(IRC_FD, data, 64)) > 0) {
+		fcntl(IRC_FD, F_SETFL, O_NONBLOCK);
+		if ((len = read(IRC_FD, data, 4096)) > 0) {
 			char c;
 			int offset = 0;
 			while (offset < len) {
@@ -519,6 +520,7 @@ static void irc_read2(void) {
 				offset = offset + 1;
 			}
 		}
+		fcntl(IRC_FD, F_SETFL, !O_NONBLOCK);
 		if((len <= 0 && errno != EAGAIN))
 		{
 			if(OPT_DEBUG >= 2)

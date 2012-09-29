@@ -15,13 +15,13 @@
 #define PIDEXT "pid"
 
 /* Maximum commands to queue */
-#define COMMANDMAX 64
+#define COMMANDMAX 128
 
 /* Interval (in seconds) to check command queue for timed out commands */
 #define COMMANDINTERVAL 10
 
 /* Timeout of commands (in seconds) */
-#define COMMANDTIMEOUT 180
+#define COMMANDTIMEOUT 90
 
 /* Interval in how often we try to reconnect (in seconds) */
 #define RECONNECTINTERVAL 30
@@ -35,6 +35,6 @@
 
 /* Defines time in which bot will timeout * if no data is received
  * (default 15 min) */
-#define NODATA_TIMEOUT 900
+#define NODATA_TIMEOUT 300
 
 #endif /* OPTIONS_H */

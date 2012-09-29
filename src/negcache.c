@@ -277,11 +277,12 @@ static void nc_rebuild(struct cnode *old_head, struct cnode *new_head,
       new->seen = n->seen;
    }
    else {
+/*
        if (n->counter > 5) {
-         struct in_addr address;
-	 address.s_addr = htonl(n->ip);
-	 irc_send(0, "PRIVMSG #BOPM :(%lu) hits scan found: %s", n->counter , inet_ntoa(address));
+	 char ipstr[INET_ADDRSTRLEN];
+	 irc_send(0, "PRIVMSG #BOPM :(%i) hits scan found: %s", n->counter, inet_ntop(AF_INET, n->ip, ipstr, INET_ADDRSTRLEN));
       }
+*/
    }
 
 
