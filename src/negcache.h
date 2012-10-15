@@ -9,6 +9,7 @@ struct cnode
    unsigned int b;		/* Index of bit to be tested. */
    struct cnode *l;	/* Node to the left. */
    struct cnode *r;	/* Node to the right. */
+   char * stringip;
 };
 
 extern void nc_init(struct cnode **);

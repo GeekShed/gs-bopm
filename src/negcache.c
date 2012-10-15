@@ -65,6 +65,7 @@ along with this program; if not, write to:
 #include "log.h"
 #include "defs.h"
 #include "timec.h"
+#include <string.h>
 RCSID("$Id: negcache.c,v 1.5 2003/06/22 13:19:39 andy Exp $");
 
 extern unsigned int OPT_DEBUG;
@@ -219,12 +220,14 @@ void negcache_insert(const char *ipstr)
       log_printf("NEGCACHE -> Invalid IPv4 address '%s'", ipstr);
       return;
    }
-
    n = nc_insert(nc_head, ip.sa4.sin_addr.s_addr);
+
 
    if (n) {
       n->seen = time(NULL);
       n->counter = 1;
+      char * scratchip = DupString(ipstr);
+      n->stringip = scratchip;
    }
 }
 
@@ -266,6 +269,11 @@ static void nc_rebuild(struct cnode *old_head, struct cnode *new_head,
        */
       nc_rebuild(old_head, new_head, n->r, now);
    }
+   if (n->counter > 5) {
+      if (n->stringip != NULL) {
+      	irc_send(0, "PRIVMSG #BOPM :POSSIBLE FLOOD: (%i hits) %s", n->counter, n->stringip);
+	}
+   }
 
    if ((now - n->seen) < OptionsItem->negcache)
    {
@@ -277,16 +285,14 @@ static void nc_rebuild(struct cnode *old_head, struct cnode *new_head,
       new->seen = n->seen;
    }
    else {
-/*
-       if (n->counter > 5) {
-	 char ipstr[INET_ADDRSTRLEN];
-	 irc_send(0, "PRIVMSG #BOPM :(%i) hits scan found: %s", n->counter, inet_ntop(AF_INET, n->ip, ipstr, INET_ADDRSTRLEN));
-      }
-*/
+
    }
 
 
    /* Safe to free() this node now. */
+   if (n->stringip != NULL) {
+      MyFree(n->stringip);
+   }
    MyFree(n);
 }
 
