@@ -1008,7 +1008,7 @@ static void m_ctcp(char **parv, unsigned int parc, char *msg, struct UserInfo *s
 
    if(strncasecmp(parv[3], "\001VERSION\001", 9) == 0)
    {
-      irc_send(0, "NOTICE %s :\001VERSION Blitzed Open Proxy Monitor %s\001",
+      irc_send(0, "NOTICE %s :\001VERSION GS-BOPM %s\001",
             source_p->irc_nick, VERSION);
    }
 }
