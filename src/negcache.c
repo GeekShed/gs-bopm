@@ -271,7 +271,10 @@ static void nc_rebuild(struct cnode *old_head, struct cnode *new_head,
    }
    if (n->counter > 5) {
       if (n->stringip != NULL) {
-      	irc_send(0, "PRIVMSG #BOPM :POSSIBLE FLOOD: (%i hits) %s", n->counter, n->stringip);
+	if (n->counter > 150) {
+		irc_send(0, "PRIVMSG #BOPM :GZLINE *@%s 30d :BOPM Auto-Zline", n->stringip);
+	} else if (n->counter > 20)
+	      	irc_send(0, "PRIVMSG #BOPM :POSSIBLE FLOOD: (%i hits) %s", n->counter, n->stringip);
 	}
    }
 
