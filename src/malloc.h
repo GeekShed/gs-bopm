@@ -10,3 +10,8 @@ extern void _MyFree(void **var);
 char *DupString(const char *y);
 
 #endif /* MALLOC_H */
+
+#ifdef GC
+#include <gc.h>
+#endif
+

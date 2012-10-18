@@ -9415,6 +9415,7 @@ uts4*)
   dynamic_linker=no
   ;;
 esac
+
 { echo "$as_me:$LINENO: result: $dynamic_linker" >&5
 echo "${ECHO_T}$dynamic_linker" >&6; }
 test "$dynamic_linker" = no && can_build_shared=no

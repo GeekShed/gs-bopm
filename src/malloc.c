@@ -25,8 +25,6 @@
 #include <assert.h>
 #include <string.h>
 #include "malloc.h"
-
-
 /* MyMalloc
  *  
  *   A wrapper function for malloc(), for catching memory issues
@@ -41,10 +39,16 @@
 
 void *MyMalloc(size_t bytes)
 {
+#ifdef GC
+   void *ret = GC_MALLOC(bytes);
+   assert(ret);
+   return ret;
+#endif
+#ifndef GC
    void *ret = calloc(1, bytes);
    assert(ret);
-
    return ret;
+#endif
 }
 
 
@@ -65,7 +69,13 @@ void _MyFree(void **var)
    assert(var != NULL);
 
    if(*var != NULL)
+   {
+#ifdef GC
+#endif
+#ifndef GC
       free(*var);
+#endif
+}
    *var = NULL;
 }
 
